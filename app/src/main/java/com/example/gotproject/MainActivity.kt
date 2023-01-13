@@ -2,18 +2,14 @@ package com.example.gotproject
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.TextView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.StringBuilder
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 
-const val BASE_URL = "https://anapioficeandfire.com/api/"
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     lateinit var myAdapter: Adapter
@@ -23,39 +19,36 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         recyclerview_characters = findViewById<RecyclerView>(R.id.recyclerview_characters)
 
         recyclerview_characters.setHasFixedSize(true)
         linearLayoutManager =
             LinearLayoutManager(this)
         recyclerview_characters.layoutManager = linearLayoutManager
-        getMyData()
+
+        initViewModel()
+        initMainViewModel()
     }
 
-    private fun getMyData() {
-        val retrofitBuilder = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .create(ApiInterface::class.java)
+    private fun initViewModel() {
+        recyclerview_characters.apply {
+            linearLayoutManager = LinearLayoutManager(this@MainActivity)
 
-        val retrofitData = retrofitBuilder.getCharactersData()
+            myAdapter = Adapter()
+        }
+    }
 
-        retrofitData.enqueue(object : Callback<List<DataCharactersItem>?> {
-            override fun onResponse(
-                call: Call<List<DataCharactersItem>?>,
-                response: Response<List<DataCharactersItem>?>
-            ) {
-                val responseBody = response.body()!!
-
-                myAdapter = Adapter(baseContext, responseBody)
-                myAdapter.notifyDataSetChanged()
-                recyclerview_characters.adapter = myAdapter
-            }
-
-            override fun onFailure(call: Call<List<DataCharactersItem>?>, t: Throwable) {
-                Log.d("MainActivity", "onFailure" + t.message)
-            }
+    private fun initMainViewModel() {
+        val viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel.getAllDataItemsList().observe(this, Observer<List<DataCharactersItem>> {
+            myAdapter.setListData(it)
+            myAdapter.notifyDataSetChanged()
         })
+
+        viewModel.makeApiCall()
     }
+
+
+
 }

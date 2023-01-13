@@ -1,3 +1,3 @@
 package com.example.gotproject
 
-class  DataCharacters : ArrayList<DataCharactersItem>()
+data class DataCharacters( val items: List<DataCharactersItem> )
