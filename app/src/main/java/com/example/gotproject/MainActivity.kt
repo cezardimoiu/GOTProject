@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
     private fun initViewModel() {
         recyclerview_characters.apply {
             linearLayoutManager = LinearLayoutManager(this@MainActivity)
-
             myAdapter = Adapter()
+            this.adapter = myAdapter
         }
     }
 
@@ -45,8 +45,6 @@ class MainActivity : AppCompatActivity() {
             myAdapter.setListData(it)
             myAdapter.notifyDataSetChanged()
         })
-
-        viewModel.makeApiCall()
     }
 
 

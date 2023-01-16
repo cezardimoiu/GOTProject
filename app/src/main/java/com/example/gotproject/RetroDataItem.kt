@@ -26,7 +26,7 @@ class RetroDataItem @Inject constructor(private val retroServiceInterface: Retro
             ) {
                 if(response.isSuccessful) {
                     appDao.deleteAllRecords()
-                    response.body()?.items?.forEach {
+                    response.body()?.forEach {
                         insertRecord(it)
                     }
                 }

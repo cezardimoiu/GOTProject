@@ -9,6 +9,10 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(private val dataItems: RetroDataItem)
     : ViewModel(){
 
+    init {
+        makeApiCall()
+    }
+
     fun getAllDataItemsList(): LiveData<List<DataCharactersItem>> {
         return dataItems.getAllRecords()
     }

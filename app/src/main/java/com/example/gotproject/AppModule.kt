@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,13 +16,13 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun getAppDatabase(context: Context): AppDatabase {
-        return AppDatabase.getAppDBInstance(context)
+    fun getAppDatabase(@ApplicationContext context: Context): AppDB {
+        return AppDB.getAppDBInstance(context)
     }
 
     @Provides
     @Singleton
-    fun getAppDao(appDatabase: AppDatabase): AppDao {
+    fun getAppDao(appDatabase: AppDB): AppDao {
         return appDatabase.getAppDao()
     }
 
