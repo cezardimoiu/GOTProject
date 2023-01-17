@@ -1,3 +1,3 @@
 package com.example.gotproject
 
-class  DataCharacters : ArrayList<DataCharactersItem>()
+abstract class DataCharacters : List<DataCharactersItem>

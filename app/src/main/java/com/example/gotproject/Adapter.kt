@@ -1,6 +1,7 @@
 package com.example.gotproject
 
 import android.content.Context
+import android.provider.ContactsContract
 import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
@@ -8,36 +9,46 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class Adapter (val context: Context, val charactersList: List<DataCharactersItem>): RecyclerView.Adapter<Adapter.ViewHolder>() {
+class Adapter (): RecyclerView.Adapter<Adapter.ViewHolder>() {
+    var charactersList: List<DataCharactersItem>? = null
+    fun setListData(listData: List<DataCharactersItem>?) {
+        this.charactersList = listData
+    }
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var name: TextView
-        var alias: TextView
+        var culture: TextView
 
         init {
             name = itemView.findViewById(R.id.characterName)
-            alias = itemView.findViewById(R.id.aliasName)
+            culture = itemView.findViewById(R.id.aliasName)
+        }
+
+        fun bind(data: DataCharactersItem) {
+            if (!isEmpty(data.name)) {
+                name.text = data.name
+                if (isEmpty(data.culture))
+                    culture.text = "no culture"
+                else
+                    culture.text = data.culture
+            } else {
+                name.text = "Unknown"
+                culture.text = data.culture
+            }
         }
     }
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        var itemView = LayoutInflater.from(context).inflate(R.layout.row_items, p0, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Adapter.ViewHolder {
+
+        var itemView = LayoutInflater.from(parent.context).inflate(R.layout.row_items, parent, false)
         return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        if (!isEmpty(charactersList[p1].name)) {
-            p0.name.text = charactersList[p1].name
-            if (isEmpty(charactersList[p1].aliases[0]))
-                p0.alias.text = "no alias"
-            else
-                p0.alias.text = charactersList[p1].aliases[0]
-        } else {
-            p0.name.text = "Unknown"
-            p0.alias.text = charactersList[p1].aliases[0]
-        }
+    override fun onBindViewHolder(holder: Adapter.ViewHolder, position: Int) {
+        holder.bind(charactersList?.get(position)!!)
     }
 
     override fun getItemCount(): Int {
-        return charactersList.size
+        if (charactersList == null) return 0
+        return charactersList?.size!!
     }
 }
